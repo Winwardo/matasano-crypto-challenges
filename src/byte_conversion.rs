@@ -58,12 +58,12 @@ pub fn bytes_to_hex(bytes: Vec<u8>) -> String {
 			7 => '7',
 			8 => '8',
 			9 => '9',
-			10 => 'A',
-			11 => 'B',
-			12 => 'C',
-			13 => 'D',
-			14 => 'E',
-			15 => 'F',
+			10 => 'a',
+			11 => 'b',
+			12 => 'c',
+			13 => 'd',
+			14 => 'e',
+			15 => 'f',
 			_ => unreachable!(),
 		};
 
@@ -190,6 +190,8 @@ pub fn hex_to_base64(hex: &str) -> String {
 	bytes_to_base64(bytes)
 }
 
+//-----------------------------------------------------------------------------
+
 #[cfg(test)]
 mod test {
 	use super::*;
@@ -203,13 +205,13 @@ mod test {
 	#[test]
 	fn hex_to_bytes_i_simple() {
 		let x : Vec<u8> = vec![73,74];
-		assert_eq!(x, hex_to_bytes("494A"));
+		assert_eq!(x, hex_to_bytes("494a"));
 	}
 
 	#[test]
-	fn hex_to_bytes_i_simple_lowercase() {
+	fn hex_to_bytes_i_simple_uppercase() {
 		let x : Vec<u8> = vec![73,74];
-		assert_eq!(x, hex_to_bytes("494a"));
+		assert_eq!(x, hex_to_bytes("494A"));
 	}
 
 	#[test]
@@ -228,12 +230,12 @@ mod test {
 	#[test]
 	fn bytes_to_hex_i_simple() {
 		let a : Vec<u8> = vec![73,74];
-		assert_eq!("494A".to_string(), bytes_to_hex(a));
+		assert_eq!("494a".to_string(), bytes_to_hex(a));
 	}
 
 	#[test]
 	fn bytes_and_hex_symmetricality() {
-		let hex = "45AB";
+		let hex = "45ab";
 		assert_eq!(hex, bytes_to_hex(hex_to_bytes(hex)));
 	}
 

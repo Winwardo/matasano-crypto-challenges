@@ -40,7 +40,13 @@ pub fn score_on_letter_frequency(string: &Vec<u8>) -> u8 {
     	match *byte as char {
     		'A'...'Z' => frequency_table[(byte - 65) as usize] += 1,
     		'a'...'z' => frequency_table[(byte - 97) as usize] += 1,
-    		_ => frequency_table[26] += 1
+    		e @ _ => {
+    			if (e as u8) < 128 {
+    				frequency_table[26] += 1
+    			} else {
+    				return 0
+    			}
+    		}
     	}
     }
 

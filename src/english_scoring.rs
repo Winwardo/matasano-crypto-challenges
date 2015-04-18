@@ -31,6 +31,36 @@ pub fn score_on_word_length(string: Vec<u8>) -> u8 {
 	}
 }
 
+pub fn score_on_letter_frequency(string: Vec<u8>) -> u8 {
+	let mut frequency_table: Vec<u32> = vec![0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+	let example_frequency_table: Vec<f32> = vec![8.167, 1.492, 2.782, 4.253, 12.702, 2.228, 2.015, 6.094, 6.966, 0.153, 0.772, 4.025, 2.406, 6.749, 7.507, 1.929, 0.095, 5.987, 6.327, 9.056, 2.758, 0.978, 2.360, 0.150, 1.974, 0.074, 0.0];
+	assert_eq!(frequency_table.len(), example_frequency_table.len());
+
+    for byte in string {
+    	match byte as char {
+    		'A'...'Z' => frequency_table[(byte - 65) as usize] += 1,
+    		'a'...'z' => frequency_table[(byte - 97) as usize] += 1,
+    		_ => frequency_table[26] += 1
+    	}
+    }
+
+    let max_value: u32 = *frequency_table.iter().max().unwrap();
+
+    // Score tables out of 0 - 1
+    let normalised_frequency_table: Vec<f32> = frequency_table.iter().map(|x| (*x) as f32 / max_value as f32).collect();
+    let normalised_example_frequency_table: Vec<f32> = example_frequency_table.iter().map(|x| (*x) as f32 / 12.702).collect();
+    
+    // Create a similarity vector
+    let mut similarity_vector: Vec<f32> = vec![];
+	for pair in normalised_frequency_table.iter().zip(normalised_example_frequency_table.iter()) {
+    	let (a, b) = pair;
+    	similarity_vector.push(a - b);
+    }
+
+    let difference: f32 = similarity_vector.iter().fold(0.0, |acc, &item| acc + item).abs();
+    (255.0 - difference * 5.0) as u8
+}
+
 //-----------------------------------------------------------------------------
 
 #[cfg(test)]
@@ -51,6 +81,16 @@ mod test {
 	fn score_on_word_length_i_shorter() {
 		let score_real = score_on_word_length("This is a realistic looking piece of text.".bytes().collect());
 		let score_fake = score_on_word_length("ej n 45 j 48 494 $% i4 3AE 22".bytes().collect());
+
+		assert!(score_real > score_fake);
+	}
+
+	#[test]
+	fn score_on_letter_frequency_i_longer() {
+		let score_real = score_on_letter_frequency("This is a realistic looking piece of text.".bytes().collect());
+		let score_fake = score_on_letter_frequency("ejGD*%%%%5545 j48494$%i43i3fdg3AE22".bytes().collect());
+
+		println!("{} {} ", score_real, score_fake);
 
 		assert!(score_real > score_fake);
 	}

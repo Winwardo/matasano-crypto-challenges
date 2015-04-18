@@ -39,11 +39,11 @@ pub fn hex_to_bytes(hex: &str) -> Vec<u8> {
 	result
 }
 
-pub fn bytes_to_readable_text(bytes: Vec<u8>) -> String {
+pub fn bytes_to_readable_text(bytes: &Vec<u8>) -> String {
 	bytes.iter().map(|x| *x as char).collect()
 }
 
-pub fn bytes_to_hex(bytes: Vec<u8>) -> String {
+pub fn bytes_to_hex(bytes: &Vec<u8>) -> String {
 	let mut result : String = String::new();
 	for byte in bytes {
 
@@ -76,7 +76,7 @@ pub fn bytes_to_hex(bytes: Vec<u8>) -> String {
 
 /// Read up more on the base64 algorithm here:
 /// https://en.wikibooks.org/wiki/Algorithm_Implementation/Miscellaneous/Base64
-pub fn bytes_to_base64(bytes: Vec<u8>) -> String {
+pub fn bytes_to_base64(bytes: &Vec<u8>) -> String {
 	let base64chars: Vec<char> = vec!['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/'];
 	assert_eq!(64, base64chars.len());
 
@@ -187,7 +187,7 @@ pub fn base64_to_bytes(base64: &str) -> Vec<u8> {
 
 pub fn hex_to_base64(hex: &str) -> String {
 	let bytes = hex_to_bytes(hex);
-	bytes_to_base64(bytes)
+	bytes_to_base64(&bytes)
 }
 
 //-----------------------------------------------------------------------------
@@ -219,56 +219,56 @@ mod test {
 		let hex = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d";
 		let bytes = hex_to_bytes(hex);
 		let expected = "I'm killing your brain like a poisonous mushroom";
-		assert_eq!(expected, bytes_to_readable_text(bytes));
+		assert_eq!(expected, bytes_to_readable_text(&bytes));
 	}
 
 	#[test]
 	fn bytes_to_hex_i_empty() {
-		assert_eq!("".to_string(), bytes_to_hex(vec![]));
+		assert_eq!("".to_string(), bytes_to_hex(&vec![]));
 	}
 
 	#[test]
 	fn bytes_to_hex_i_simple() {
 		let a : Vec<u8> = vec![73,74];
-		assert_eq!("494a".to_string(), bytes_to_hex(a));
+		assert_eq!("494a".to_string(), bytes_to_hex(&a));
 	}
 
 	#[test]
 	fn bytes_and_hex_symmetricality() {
 		let hex = "45ab";
-		assert_eq!(hex, bytes_to_hex(hex_to_bytes(hex)));
+		assert_eq!(hex, bytes_to_hex(&hex_to_bytes(hex)));
 	}
 
 	#[test]
 	fn bytes_to_base64_i_empty() {
 		let a : Vec<u8> = vec![];
-		assert_eq!("".to_string(), bytes_to_base64(a));
+		assert_eq!("".to_string(), bytes_to_base64(&a));
 	}
 
 	#[test]
 	fn bytes_to_base64_i_simple() {
 		let a : Vec<u8> = vec![97];
-		let actual = bytes_to_base64(a);
+		let actual = bytes_to_base64(&a);
 		assert_eq!("YQ==".to_string(), actual);
 	}
 
 	#[test]
 	fn bytes_to_base64_i_fits() {
 		let a : Vec<u8> = vec![72, 101, 108, 108, 111, 33];
-		let actual = bytes_to_base64(a);
+		let actual = bytes_to_base64(&a);
 		assert_eq!("SGVsbG8h".to_string(), actual);
 	}
 
 	#[test]
 	fn bytes_to_base64_i_padded() {
 		let a : Vec<u8> = vec![72, 101, 108, 108, 111];
-		assert_eq!("SGVsbG8=".to_string(), bytes_to_base64(a));
+		assert_eq!("SGVsbG8=".to_string(), bytes_to_base64(&a));
 	}
 
 	#[test]
 	fn bytes_to_base64_i_double_padded() {
 		let a : Vec<u8> = vec![72, 101, 108, 108];
-		assert_eq!("SGVsbA==".to_string(), bytes_to_base64(a));
+		assert_eq!("SGVsbA==".to_string(), bytes_to_base64(&a));
 	}
 
 	#[test]
@@ -292,19 +292,19 @@ mod test {
 	#[test]
 	fn bytes_and_base64_symmetricality_1() {
 		let base64_1 = "aGVsbG8=";
-		assert_eq!(base64_1, bytes_to_base64(base64_to_bytes(base64_1)));
+		assert_eq!(base64_1, bytes_to_base64(&base64_to_bytes(base64_1)));
 	}
 
 	#[test]
 	fn bytes_and_base64_symmetricality_2() {
 		let base64_2 = "";
-		assert_eq!(base64_2, bytes_to_base64(base64_to_bytes(base64_2)));
+		assert_eq!(base64_2, bytes_to_base64(&base64_to_bytes(base64_2)));
 	}
 
 	#[test]
 	fn bytes_and_base64_symmetricality_3() {
 		let base64_3 = "SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t";
-		assert_eq!(base64_3, bytes_to_base64(base64_to_bytes(base64_3)));
+		assert_eq!(base64_3, bytes_to_base64(&base64_to_bytes(base64_3)));
 	}
 
 	#[test]

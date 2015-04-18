@@ -1,4 +1,4 @@
-pub fn xor_byte_streams(a: Vec<u8>, b: Vec<u8>) -> Vec<u8> {
+pub fn xor_byte_streams(a: &Vec<u8>, b: &Vec<u8>) -> Vec<u8> {
 	assert_eq!(a.len(), b.len());
 
 	let mut result: Vec<u8> = vec![];
@@ -12,9 +12,9 @@ pub fn xor_byte_streams(a: Vec<u8>, b: Vec<u8>) -> Vec<u8> {
 pub fn xor_hex_strings(a: &str, b: &str) -> String {
 	use byte_conversion::*;
 	bytes_to_hex(
-		xor_byte_streams(
-			hex_to_bytes(a),
-			hex_to_bytes(b)
+		&xor_byte_streams(
+			&hex_to_bytes(a),
+			&hex_to_bytes(b)
 		)
 	)
 }

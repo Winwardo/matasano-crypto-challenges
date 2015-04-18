@@ -1,6 +1,3 @@
-fn main() {
-}
-
 pub fn hex_to_bytes(hex: &str) -> Vec<u8> {
 	assert_eq!(0, hex.len() % 2);
 	let mut result : Vec<u8> = Vec::new();

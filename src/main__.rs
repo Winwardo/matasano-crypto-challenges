@@ -78,5 +78,5 @@ fn problem_4() {
 }
 
 fn main() {
-	problem_4();
+	println!("Running.");
 }

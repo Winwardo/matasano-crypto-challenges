@@ -1,5 +1,5 @@
 pub fn hex_to_bytes(hex: &str) -> Vec<u8> {
-	assert_eq!(0, hex.len() % 2);
+	assert!(hex.len() % 2 == 0, "Hex string length is not even.");
 	let mut result : Vec<u8> = Vec::new();
 
 	let mut first_byte = true;
@@ -41,6 +41,10 @@ pub fn hex_to_bytes(hex: &str) -> Vec<u8> {
 
 pub fn bytes_to_readable_text(bytes: &Vec<u8>) -> String {
 	bytes.iter().map(|x| *x as char).collect()
+}
+
+pub fn readable_text_to_bytes(text: &str) -> Vec<u8> {
+	text.bytes().collect()
 }
 
 pub fn bytes_to_hex(bytes: &Vec<u8>) -> String {
@@ -220,6 +224,15 @@ mod test {
 		let bytes = hex_to_bytes(hex);
 		let expected = "I'm killing your brain like a poisonous mushroom";
 		assert_eq!(expected, bytes_to_readable_text(&bytes));
+	}
+
+	#[test]
+	fn bytes_to_readable_symmetricality() {
+		let text = "I'm killing your brain like a poisonous mushroom";
+		let bytes = readable_text_to_bytes(text);
+		let text_out = bytes_to_readable_text(&bytes);
+
+		assert_eq!(text_out, text);
 	}
 
 	#[test]

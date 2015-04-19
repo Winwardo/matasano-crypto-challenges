@@ -25,6 +25,7 @@ fn guess_single_xor_char_decode(bytes: &Vec<u8>) -> (u16, Vec<u8>) {
 }
 
 fn problem_3() {
+	// http://cryptopals.com/sets/1/challenges/3/
 	use byte_conversion::*;
 	let encoded = hex_to_bytes("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736");
 
@@ -34,6 +35,7 @@ fn problem_3() {
 }
 
 fn problem_4() {
+	// http://cryptopals.com/sets/1/challenges/4/
 	use std::error::Error;
 	use std::fs::File;
 	use std::io::prelude::*;

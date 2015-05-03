@@ -88,6 +88,16 @@ mod test {
 	}
 
 	#[test]
+	fn score_on_word_length_i_really_long() {
+		let score_real = score_on_word_length(&"This is a realistic looking piece of text.".bytes().collect());
+		let score_fake = score_on_word_length(&"ejGD%5545j48494$%i43i3ffg5dg3AE22".bytes().collect());
+
+		println!("{} {} ", score_real, score_fake);
+
+		assert!(score_real > score_fake);
+	}
+
+	#[test]
 	fn score_on_word_length_i_shorter() {
 		let score_real = score_on_word_length(&"This is a realistic looking piece of text.".bytes().collect());
 		let score_fake = score_on_word_length(&"ej n 45 j 48 494 $% i4 3AE 22".bytes().collect());
@@ -99,6 +109,17 @@ mod test {
 	fn score_on_letter_frequency_i_longer() {
 		let score_real = score_on_letter_frequency(&"This is a realistic looking piece of text.".bytes().collect());
 		let score_fake = score_on_letter_frequency(&"ejGD*%%%%5545 j48494$%i43i3fdg3AE22".bytes().collect());
+
+		println!("{} {} ", score_real, score_fake);
+
+		assert!(score_real > score_fake);
+	}
+
+
+	#[test]
+	fn score_on_letter_frequency_i_longer() {
+		let score_real = score_on_letter_frequency(&"This is a realistic looking piece of text.".bytes().collect());
+		let score_fake = score_on_letter_frequency(&"This is a realistic looking piece of text with a weird character in it: ☃".bytes().collect());
 
 		println!("{} {} ", score_real, score_fake);
 

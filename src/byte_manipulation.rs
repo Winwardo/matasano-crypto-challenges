@@ -19,6 +19,35 @@ pub fn xor_hex_strings(a: &str, b: &str) -> String {
 	)
 }
 
+pub fn transpose_chunks(chunks: &Vec<Vec<u8>>) -> Vec<Vec<u8>> {
+	let chunksCount = chunks.len();
+	if chunksCount == 0 {
+		return vec![];
+	}
+
+	let chunkSize = chunks[0].len();
+	if chunkSize == 0 {
+		return vec![];
+	}
+
+	let mut result: Vec<Vec<u8>> = Vec::new();
+	for x in 0..chunkSize {
+		result.push(vec![]);
+	}
+
+
+	for x in 0..chunksCount {
+		let chunk = chunks.get(x).unwrap();
+		assert_eq!(chunkSize, chunk.len());
+
+		for y in 0..chunkSize {
+			result[y].push(*chunk.get(y).unwrap());
+		}
+	}
+
+	result
+}
+
 //-----------------------------------------------------------------------------
 
 #[cfg(test)]
@@ -51,5 +80,76 @@ mod test {
 	#[should_panic]
 	fn xor_hex_strings_i_unequal_sizes_2() {
 		xor_hex_strings("", "08AF");
+	}
+
+	#[test]
+	fn transpose_chunks_i_empty() {
+		let a: Vec<Vec<u8>> = vec![];
+		let expected: Vec<Vec<u8>> = vec![];
+
+		assert_eq!(expected, transpose_chunks(&a));
+	}
+
+	#[test]
+	fn transpose_chunks_i_single_byte() {
+		// 5 -> 5
+
+		let a = vec![vec![5]];
+		let expected: Vec<Vec<u8>> = vec![vec![5]];
+
+		assert_eq!(expected, transpose_chunks(&a));
+	}
+
+	#[test]
+	fn transpose_chunks_i_double_single() {
+		// 5 6  ->  5
+		//          6
+
+		let a = vec![vec![5, 6]];
+		let expected: Vec<Vec<u8>> = vec![vec![5], vec![6]];
+
+		assert_eq!(expected, transpose_chunks(&a));
+	}
+
+	#[test]
+	fn transpose_chunks_i_double_double() {
+		// 5 6  ->  5 7
+		// 7 8  ->  6 8
+
+		let a = vec![vec![5, 6], vec![7, 8]];
+		let expected: Vec<Vec<u8>> = vec![vec![5, 7], vec![6, 8]];
+
+		assert_eq!(expected, transpose_chunks(&a));
+	}
+
+	#[test]
+	fn transpose_chunks_i_single_double() {
+		// 5  ->  5 7
+		// 7
+
+		let a = vec![vec![5], vec![7]];
+		let expected: Vec<Vec<u8>> = vec![vec![5, 7]];
+
+		assert_eq!(expected, transpose_chunks(&a));
+	}
+
+	#[test]
+	fn transpose_chunks_i_double_triple() {
+		// 1 2 3 ->  1 4
+		// 4 5 6 ->  2 5
+		//       ->  3 6
+
+		let a = vec![vec![1, 2, 3], vec![4, 5, 6]];
+		let expected: Vec<Vec<u8>> = vec![vec![1, 4], vec![2, 5], vec![3, 6]];
+
+		assert_eq!(expected, transpose_chunks(&a));
+	}
+
+	#[test]
+	#[should_panic]
+	fn transpose_chunks_i_mismatched_sized_chunks() {
+		let a = vec![vec![5], vec![7, 8]];
+
+		transpose_chunks(&a);
 	}
 }

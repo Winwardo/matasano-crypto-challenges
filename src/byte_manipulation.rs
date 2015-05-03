@@ -91,6 +91,14 @@ mod test {
 	}
 
 	#[test]
+	fn transpose_chunks_i_empty_chunks() {
+		let a: Vec<Vec<u8>> = vec![vec![], vec![]];
+		let expected: Vec<Vec<u8>> = vec![];
+
+		assert_eq!(expected, transpose_chunks(&a));
+	}
+
+	#[test]
 	fn transpose_chunks_i_single_byte() {
 		// 5 -> 5
 

@@ -21,14 +21,16 @@ pub fn score_on_word_length(string: &Vec<u8>) -> u8 {
 		closeness_to_avg = -closeness_to_avg;
 	}
 
-	let score_modifier: u8 = (closeness_to_avg * 40.0) as u8;
-	let score: u8 = 255 - score_modifier;
+	let score_modifier: i32 = (closeness_to_avg * 40.0) as i32;
+	let mut score: i32 = 255i32 - score_modifier;
 
-	if score > 0 {
-		score
-	} else {
-		0
+	if score < 0 {
+		score = 0;
+	} else if score > 255 {
+		score = 255;
 	}
+
+	score as u8
 }
 
 pub fn score_on_letter_frequency(string: &Vec<u8>) -> u8 {

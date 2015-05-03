@@ -117,7 +117,7 @@ mod test {
 
 
 	#[test]
-	fn score_on_letter_frequency_i_longer() {
+	fn score_on_letter_frequency_i_weird_character() {
 		let score_real = score_on_letter_frequency(&"This is a realistic looking piece of text.".bytes().collect());
 		let score_fake = score_on_letter_frequency(&"This is a realistic looking piece of text with a weird character in it: ☃".bytes().collect());
 

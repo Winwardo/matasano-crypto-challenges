@@ -1,5 +1,8 @@
 fn check_bit(left: &u8, right: &u8, bit: u8) -> u16 {
-	if left & ((1 << bit) as u8) ^ right & ((1 << bit) as u8) > 0 {
+	let left_bit = left & ((1 << bit) as u8);
+	let right_bit = right & ((1 << bit) as u8);
+
+	if (left_bit ^ right_bit) > 0 {
 		1
 	} else {
 		0
@@ -10,9 +13,9 @@ pub fn hamming_distance(a: &Vec<u8>, b: &Vec<u8>) -> u16 {
 	let mut count: u16 = 0;
 
 	for (left, right) in a.iter().zip(b.iter()) {
-		for bit in 0..9 {
+		for bit in 0..8
+		{
 			count += check_bit(&left, &right, bit);
-			println!("{}", bit);
 		}
 	}
 

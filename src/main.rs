@@ -3,6 +3,7 @@
 mod byte_conversion;
 mod byte_manipulation;
 mod english_scoring;
+mod general_utilities;
 
 fn guess_single_xor_char_decode(bytes: &Vec<u8>) -> (u16, Vec<u8>) {
 	let mut top_score = 0;
@@ -24,35 +25,6 @@ fn guess_single_xor_char_decode(bytes: &Vec<u8>) -> (u16, Vec<u8>) {
 	(top_score, top_decode)
 }
 
-fn read_file(location: &str) -> String {
-	use std::error::Error;
-	use std::fs::File;
-	use std::io::prelude::*;
-	use std::path::Path;
-
-	// Create a path to the desired file
-    let path = Path::new(location);
-    let display = path.display();
-
-    // Open the path in read-only mode, returns `io::Result<File>`
-    let mut file = match File::open(&path) {
-        // The `description` method of `io::Error` returns a string that
-        // describes the error
-        Err(why) => panic!("couldn't open {}: {}", display,
-                                                   Error::description(&why)),
-        Ok(file) => file,
-    };
-
-    // Read the file contents into a string, returns `io::Result<usize>`
-    let mut file_data = String::new();
-    match file.read_to_string(&mut file_data) {
-        Err(why) => panic!("couldn't read {}: {}", display, Error::description(&why)),
-        Ok(_) => {},
-    }
-
-    file_data
-}
-
 
 fn problem_3() {
 	// http://cryptopals.com/sets/1/challenges/3/
@@ -69,7 +41,7 @@ fn problem_4() {
 
 	use byte_conversion::*;
 
-	let s = read_file("C:\\Users\\Topher\\Dropbox\\Public\\Programming\\Matasano\\matasano-crypto-challenges\\res\\4.txt");
+	let s = general_utilities::read_file("C:\\Users\\Topher\\Dropbox\\Public\\Programming\\Matasano\\matasano-crypto-challenges\\res\\4.txt");
 
 	let mut top_score = 0;
 	let mut top_decode = vec![];	
@@ -88,18 +60,19 @@ fn problem_4() {
 
 fn problem_6() {
 	// http://cryptopals.com/sets/1/challenges/6/
+
+	use byte_conversion::*;
+
+	let file_data = general_utilities::read_file("C:\\Users\\Topher\\Dropbox\\Public\\Programming\\Matasano\\matasano-crypto-challenges\\res\\6.txt");
+	let data_bytes = readable_text_to_bytes(&file_data);
+	for keysize in 2..40 {
+
+		//let  Vec<u8> 
+	}
 }
 
 fn main() {
 	println!("Running.");
 
-	problem_4();
-
-
-	for keysize in 2..40 {
-
-		//let  Vec<u8> 
-	}
-
-
+	problem_6();
 }

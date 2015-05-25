@@ -24,26 +24,14 @@ fn guess_single_xor_char_decode(bytes: &Vec<u8>) -> (u16, Vec<u8>) {
 	(top_score, top_decode)
 }
 
-fn problem_3() {
-	// http://cryptopals.com/sets/1/challenges/3/
-	use byte_conversion::*;
-	let encoded = hex_to_bytes("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736");
-
-	let (top_score, top_decode) = guess_single_xor_char_decode(&encoded);
-
-	println!("Best guess: `{}`, with a score of {}.", bytes_to_readable_text(&top_decode), top_score);
-}
-
-fn problem_4() {
-	// http://cryptopals.com/sets/1/challenges/4/
+fn read_file(location: &str) -> String {
 	use std::error::Error;
 	use std::fs::File;
 	use std::io::prelude::*;
 	use std::path::Path;
-	use byte_conversion::*;
 
 	// Create a path to the desired file
-    let path = Path::new("C:\\Users\\Topher\\Dropbox\\Public\\Programming\\Matasano\\matasano-crypto-challenges\\res\\4.txt");
+    let path = Path::new(location);
     let display = path.display();
 
     // Open the path in read-only mode, returns `io::Result<File>`
@@ -56,11 +44,32 @@ fn problem_4() {
     };
 
     // Read the file contents into a string, returns `io::Result<usize>`
-    let mut s = String::new();
-    match file.read_to_string(&mut s) {
+    let mut file_data = String::new();
+    match file.read_to_string(&mut file_data) {
         Err(why) => panic!("couldn't read {}: {}", display, Error::description(&why)),
         Ok(_) => {},
     }
+
+    file_data
+}
+
+
+fn problem_3() {
+	// http://cryptopals.com/sets/1/challenges/3/
+	use byte_conversion::*;
+	let encoded = hex_to_bytes("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736");
+
+	let (top_score, top_decode) = guess_single_xor_char_decode(&encoded);
+
+	println!("Best guess: `{}`, with a score of {}.", bytes_to_readable_text(&top_decode), top_score);
+}
+
+fn problem_4() {
+	// http://cryptopals.com/sets/1/challenges/4/
+
+	use byte_conversion::*;
+
+	let s = read_file("C:\\Users\\Topher\\Dropbox\\Public\\Programming\\Matasano\\matasano-crypto-challenges\\res\\4.txt");
 
 	let mut top_score = 0;
 	let mut top_decode = vec![];	
@@ -83,4 +92,14 @@ fn problem_6() {
 
 fn main() {
 	println!("Running.");
+
+	problem_4();
+
+
+	for keysize in 2..40 {
+
+		//let  Vec<u8> 
+	}
+
+
 }

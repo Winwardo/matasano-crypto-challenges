@@ -1,4 +1,4 @@
-#![allow(warnings)]
+#![cfg_attr(test, allow(dead_code))]
 
 mod byte_conversion;
 mod byte_manipulation;
@@ -75,6 +75,10 @@ fn problem_4() {
     }
 
     println!("\n\n\n{} -      `{}`", top_score, bytes_to_readable_text(&top_decode));
+}
+
+fn problem_6() {
+	// http://cryptopals.com/sets/1/challenges/6/
 }
 
 fn main() {

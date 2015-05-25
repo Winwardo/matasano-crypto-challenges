@@ -31,7 +31,7 @@ pub fn transpose_chunks(chunks: &Vec<Vec<u8>>) -> Vec<Vec<u8>> {
 	}
 
 	let mut result: Vec<Vec<u8>> = Vec::new();
-	for x in 0..chunkSize {
+	for _ in 0..chunkSize {
 		result.push(vec![]);
 	}
 

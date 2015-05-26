@@ -16,7 +16,7 @@ impl Iterator for RepeatingKey {
 }
 
 impl RepeatingKey {
-	fn new(key: &str) -> RepeatingKey {
+	pub fn new(key: &str) -> RepeatingKey {
 		let key_bytes: Vec<u8> = key.bytes().collect();
 		let key_size: u16 = key_bytes.len() as u16;
 
@@ -27,7 +27,7 @@ impl RepeatingKey {
 		}
 	}
 
-	fn of_length(&mut self, length: usize) -> Vec<u8> {
+	pub fn of_length(&mut self, length: usize) -> Vec<u8> {
 		let mut result = vec![];
 		for x in self.take(length) {
 			result.push(x);
@@ -35,10 +35,11 @@ impl RepeatingKey {
 		result
 	}
 
-	fn encrypt_bytes(&mut self, bytes: &Vec<u8>) -> Vec<u8> {
+	pub fn encrypt_bytes(&mut self, bytes: &Vec<u8>) -> Vec<u8> {
 		use byte_manipulation::*;
 
 		let length = bytes.len();
+		self.iter_val = 0;
 
 		xor_byte_streams(&bytes, &self.of_length(length))		
 	}
@@ -109,5 +110,20 @@ mod test {
 		let expected = hex_to_bytes(&"0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f");
 
 		assert_eq!(expected, output);
+	}
+
+	#[test]
+	fn RepeatingKey_encrypt_bytes_twice() {
+		use byte_conversion::*;
+
+		let word = "Burning 'em, if you ain't quick and nimble\nI go crazy when I hear a cymbal";
+
+		let bytes = readable_text_to_bytes(&word);
+		let mut key = RepeatingKey::new(&"ICE");
+
+		let encrypted = key.encrypt_bytes(&bytes);
+		let decrypted = key.encrypt_bytes(&encrypted);
+
+		assert_eq!(bytes, decrypted);
 	}
 }

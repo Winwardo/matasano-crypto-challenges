@@ -32,6 +32,7 @@ impl RepeatingKey {
 		for x in self.take(length) {
 			result.push(x);
 		}
+		self.iter_val = 0;
 		result
 	}
 
@@ -39,7 +40,6 @@ impl RepeatingKey {
 		use byte_manipulation::*;
 
 		let length = bytes.len();
-		self.iter_val = 0;
 
 		xor_byte_streams(&bytes, &self.of_length(length))		
 	}

@@ -83,6 +83,20 @@ mod test {
 	}
 
 	#[test]
+	fn xor_hex_strings_i_reversable() {
+		let key = "aa44";
+		let word = "baba";
+
+		let encrypted = xor_hex_strings(&key, &word);
+		let decrypted = xor_hex_strings(&key, &encrypted);		
+
+		assert_eq!(
+			word,
+			decrypted
+		);
+	}
+
+	#[test]
 	fn transpose_chunks_i_empty() {
 		let a: Vec<Vec<u8>> = vec![];
 		let expected: Vec<Vec<u8>> = vec![];

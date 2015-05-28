@@ -1,6 +1,7 @@
 #![cfg_attr(test, allow(dead_code))]
 #![allow(dead_code)]
 
+mod attacks;
 mod byte_conversion;
 mod byte_manipulation;
 mod byte_utilities;
@@ -8,37 +9,12 @@ mod english_scoring;
 mod general_utilities;
 mod key;
 
-fn guess_single_xor_char_decode(bytes: &Vec<u8>) -> (u16, Vec<u8>, u8) {
-	use byte_conversion::*;
-	use key::*;
-
-	let mut top_score = 0;
-	let mut top_decode = vec![];
-	let mut top_x = 2;
-	for x in 0..255 {
-		let mut rk = RepeatingKey::new_bytes(vec![x]);
-		let decoded = rk.encrypt_bytes(&bytes);
-
-		//println!("{:?}", x);
-		let score = english_scoring::score_on_letter_frequency(&decoded);
-		if score > top_score {
-			println!("{} {:?}\n", score, bytes_to_readable_text(&decoded));
-			top_score = score;
-			top_decode = decoded;
-			top_x = x;
-		}
-	}
-
-	(top_score, top_decode, top_x)
-}
-
-
 fn problem_3() {
 	// http://cryptopals.com/sets/1/challenges/3/
 	use byte_conversion::*;
 	let encoded = hex_to_bytes("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736");
 
-	let (top_score, top_decode, top_x) = guess_single_xor_char_decode(&encoded);
+	let (top_score, top_decode, top_x) = attacks::guess_single_xor_char_decode(&encoded);
 
 	println!("Best guess: `{}`, with a score of {}, using character {}.", bytes_to_readable_text(&top_decode), top_score, top_x);
 }
@@ -53,7 +29,7 @@ fn problem_4() {
 	let mut top_score = 0;
 	let mut top_decode = vec![];	
     for line in s.split("\n") {
-    	let (score, decoded, _) = guess_single_xor_char_decode(&hex_to_bytes(line));
+    	let (score, decoded, _) = attacks::guess_single_xor_char_decode(&hex_to_bytes(line));
 		
 		if score > top_score {
 			top_score = score;
@@ -132,9 +108,8 @@ fn problem_6() {
 		//: Vec<(u16, String, u8)>
 		let solved_key: Vec<_> = transposed_blocks.iter()
 			.map(|x| {
-				let (a, b, c) = guess_single_xor_char_decode(x);
-				println!("{:?}", bytes_to_readable_text(&b));
-				c
+				let (_, _, guess) = attacks::guess_single_xor_char_decode(x);
+				guess
 			})
 			.collect();
 
@@ -142,8 +117,6 @@ fn problem_6() {
 		// Put them together and you have the key.
 		//let final_blocks: Vec<Vec<u8>> = transpose_chunks(&solved_blocks);
 
-		//let r: Vec<String> = final_blocks.iter().map(|x| bytes_to_readable_text(x)).collect();
-		//println!("{:?}", transposed_blocks.iter().map(|x| bytes_to_readable_text(x)).collect());
 		println!("{:?}, {:?}", solved_key, bytes_to_readable_text(&solved_key));
 
 		let mut rk = RepeatingKey::new_bytes(solved_key);
@@ -156,5 +129,5 @@ fn problem_6() {
 fn main() {
 	println!("\n\n\n\n=====\nRunning.\n\n");
 
-	problem_6();
+	problem_3();
 }

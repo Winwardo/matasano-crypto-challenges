@@ -35,10 +35,15 @@ pub fn transpose_chunks(chunks: &Vec<Vec<u8>>) -> Vec<Vec<u8>> {
 		result.push(vec![]);
 	}
 
-
 	for x in 0..chunks_count {
-		let chunk = chunks.get(x).unwrap();
-		assert_eq!(chunk_size, chunk.len());
+		let chunk_ = chunks.get(x).unwrap();
+		let mut chunk = chunk_.clone();
+		assert!(chunk_size >= chunk.len());
+
+		// Pad to the same size
+		while (chunk.len() < chunk_size) {
+			chunk.push(0);
+		}
 
 		for y in 0..chunk_size {
 			result[y].push(*chunk.get(y).unwrap());

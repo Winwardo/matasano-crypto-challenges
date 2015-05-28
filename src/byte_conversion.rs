@@ -129,7 +129,11 @@ pub fn bytes_to_base64(bytes: &Vec<u8>) -> String {
 
 pub fn base64_to_bytes(base64: &str) -> Vec<u8> {
 	// We use .bytes() and not .char() because base64 should be ASCII
-	let mut bytes: Vec<u8> = base64.bytes().collect();
+	let mut bytes: Vec<u8> = base64
+		.bytes()
+		// clean out bad characters like newlines
+		.filter(|x| *x != '\n' as u8)
+		.collect();
 
 	// Reverse padding at the end from = to 0
 	let mut length = bytes.len();
@@ -154,7 +158,6 @@ pub fn base64_to_bytes(base64: &str) -> Vec<u8> {
 			'+' => 62,
 			'/' => 63,
 			'\0' => 0,
-			'\n' => 0,
 			e @ _ => { println!("unreachable:: {}, {}", e, e as u8); unreachable!() }
 		};
 		r

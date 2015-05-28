@@ -1,4 +1,4 @@
-pub fn score_on_word_length(string: &Vec<u8>) -> u8 {
+pub fn score_on_word_length(string: &Vec<u8>) -> u16 {
 	// Ensure a minimum of one space
 	let mut string_with_space = string.clone();
 	string_with_space.push(' ' as u8);
@@ -7,7 +7,7 @@ pub fn score_on_word_length(string: &Vec<u8>) -> u8 {
 	let mut whitespace_count = 0;
 	for c in &string_with_space {
 		match *c as char {
-			' ' | '\t' => whitespace_count += 1,
+			' ' | '\t' | '\n' => whitespace_count += 1,
 			_ => {},
 		}
 	}
@@ -30,10 +30,11 @@ pub fn score_on_word_length(string: &Vec<u8>) -> u8 {
 		score = 255;
 	}
 
-	score as u8
+	score as u16
 }
 
-pub fn score_on_letter_frequency(string: &Vec<u8>) -> u8 {
+pub fn score_on_letter_frequency(string: &Vec<u8>) -> u16 {
+	use byte_conversion::*;
 	let mut frequency_table: Vec<u32> = vec![0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 	let example_frequency_table: Vec<f32> = vec![8.167, 1.492, 2.782, 4.253, 12.702, 2.228, 2.015, 6.094, 6.966, 0.153, 0.772, 4.025, 2.406, 6.749, 7.507, 1.929, 0.095, 5.987, 6.327, 9.056, 2.758, 0.978, 2.360, 0.150, 1.974, 0.074, 0.0];
 	assert_eq!(frequency_table.len(), example_frequency_table.len());
@@ -42,15 +43,20 @@ pub fn score_on_letter_frequency(string: &Vec<u8>) -> u8 {
     	match *byte as char {
     		'A'...'Z' => frequency_table[(byte - 65) as usize] += 1,
     		'a'...'z' => frequency_table[(byte - 97) as usize] += 1,
+    		'\n' => {},
     		e @ _ => {
-    			if (e as u8) < 128 {
+    			let y = e as u8;
+    			if y < 128 && y > 31 {
     				frequency_table[26] += 1
     			} else {
+    				//println!("{:?}", e);
     				return 0
     			}
     		}
     	}
     }
+   	
+   	println!("not crap {:?}", bytes_to_readable_text(&string));
 
     let max_value: u32 = *frequency_table.iter().max().unwrap();
 
@@ -66,11 +72,18 @@ pub fn score_on_letter_frequency(string: &Vec<u8>) -> u8 {
     }
 
     let difference: f32 = similarity_vector.iter().fold(0.0, |acc, &item| acc + item).abs();
-    (255.0 - difference * 5.0) as u8
+    (255.0 - difference * 5.0) as u16
 }
 
 pub fn score_combined(string: &Vec<u8>) -> u16 {
-	score_on_word_length(&string) as u16 + score_on_letter_frequency(&string) as u16
+	let length_score = score_on_word_length(&string);
+	let freq_score = score_on_letter_frequency(&string);
+
+	if (length_score == 0 || freq_score == 0) {
+		return 0;
+	}
+
+	length_score as u16 + freq_score as u16
 }
 
 //-----------------------------------------------------------------------------

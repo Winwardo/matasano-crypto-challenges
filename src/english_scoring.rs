@@ -46,17 +46,14 @@ pub fn score_on_letter_frequency(string: &Vec<u8>) -> u16 {
     		'\n' => {},
     		e @ _ => {
     			let y = e as u8;
-    			if y < 128 && y > 31 {
+    			if y < 128 && y > 31 { // Must be a valid character
     				frequency_table[26] += 1
     			} else {
-    				//println!("{:?}", e);
     				return 0
     			}
     		}
     	}
     }
-   	
-   	println!("not crap {:?}", bytes_to_readable_text(&string));
 
     let max_value: u32 = *frequency_table.iter().max().unwrap();
 

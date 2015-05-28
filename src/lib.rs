@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 mod byte_conversion;
 mod byte_manipulation;
 mod byte_utilities;

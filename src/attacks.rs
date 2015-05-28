@@ -6,10 +6,10 @@ pub fn guess_single_xor_char_decode(bytes: &Vec<u8>) -> (u16, Vec<u8>, u8) {
 	let mut top_decode = vec![];
 	let mut top_x = 2;
 	for x in 0..255 {
-		let mut rk = RepeatingKey::new_bytes(vec![x]);
+		let mut rk = RepeatingKey::new_bytes(&vec![x]);
 		let decoded = rk.encrypt_bytes(&bytes);
 
-		let score = score_on_letter_frequency(&decoded);
+		let score = score_combined(&decoded);
 		if score > top_score {
 			top_score = score;
 			top_decode = decoded;

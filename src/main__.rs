@@ -89,11 +89,15 @@ fn problem_6() {
 		x.partial_cmp(&y).unwrap_or(Equal)
 	});
 
-	println!("{:?}", keysize_points);
+	//println!("{:?}", keysize_points);
+
+	let mut top_score = 0;
+	let mut top_decode: Vec<u8> = Vec::new();
+	let mut top_key: Vec<u8> = Vec::new();
 
 	for y in 0..10 {
 		let (best_keysize, _) = keysize_points[11-y];
-		println!("{:?}", best_keysize);
+		//println!("{:?}", best_keysize);
 
 		// Now that you probably know the KEYSIZE: break the ciphertext into blocks of KEYSIZE length.
 		let blocks: Vec<Vec<u8>> = data_bytes
@@ -117,17 +121,26 @@ fn problem_6() {
 		// Put them together and you have the key.
 		//let final_blocks: Vec<Vec<u8>> = transpose_chunks(&solved_blocks);
 
-		println!("{:?}, {:?}", solved_key, bytes_to_readable_text(&solved_key));
+		//println!("{:?}, {:?}", solved_key, bytes_to_readable_text(&solved_key));
 
-		let mut rk = RepeatingKey::new_bytes(solved_key);
+		let mut rk = RepeatingKey::new_bytes(&solved_key);
 		let dec = rk.encrypt_bytes(&data_bytes);
 
-		println!("\n\n{}\n\n{:?}", 11-y, bytes_to_readable_text(&dec));
+		//println!("\n\n{}\n\n{:?}", 11-y, bytes_to_readable_text(&dec));
+
+		let score = english_scoring::score_combined(&dec);
+		if score > top_score {
+			top_score = score;
+			top_decode = dec;
+			top_key = solved_key;
+		}
 	}
+
+	println!("{}, {}, \n{:?}", bytes_to_readable_text(&top_key), top_score, bytes_to_readable_text(&top_decode));
 }
 
 fn main() {
 	println!("\n\n\n\n=====\nRunning.\n\n");
 
-	problem_3();
+	problem_6();
 }

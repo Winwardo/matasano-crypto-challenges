@@ -16,11 +16,11 @@ impl Iterator for RepeatingKey {
 }
 
 impl RepeatingKey {
-	pub fn new_bytes(key_bytes: Vec<u8>) -> RepeatingKey {
+	pub fn new_bytes(key_bytes: &Vec<u8>) -> RepeatingKey {
 		let key_size: u16 = key_bytes.len() as u16;
 
 		RepeatingKey {
-			key: key_bytes,
+			key: key_bytes.clone(),
 			iter_val: 0,
 			key_size: key_size,
 		}
@@ -28,7 +28,7 @@ impl RepeatingKey {
 
 	pub fn new(key: &str) -> RepeatingKey {
 		let key_bytes: Vec<u8> = key.bytes().collect();
-		RepeatingKey::new_bytes(key_bytes)
+		RepeatingKey::new_bytes(&key_bytes)
 	}
 
 	pub fn of_length(&mut self, length: usize) -> Vec<u8> {

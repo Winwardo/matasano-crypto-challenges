@@ -29,7 +29,7 @@ pub fn guess_repeating_xor_key(data_bytes: &Vec<u8>, max_keysize: usize) -> (u16
 	use key::*;
 
 	// Shortcut single character key guesses
-	if (max_keysize == 1) {
+	if max_keysize == 1 {
 		let (a, b, c) = guess_single_xor_char_decode(&data_bytes);
 		return (a, b, vec![c]);
 	}

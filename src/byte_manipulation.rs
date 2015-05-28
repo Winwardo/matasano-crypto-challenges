@@ -41,7 +41,7 @@ pub fn transpose_chunks(chunks: &Vec<Vec<u8>>) -> Vec<Vec<u8>> {
 		assert!(chunk_size >= chunk.len());
 
 		// Pad to the same size
-		while (chunk.len() < chunk_size) {
+		while chunk.len() < chunk_size {
 			chunk.push(0);
 		}
 

@@ -34,7 +34,6 @@ pub fn score_on_word_length(string: &Vec<u8>) -> u16 {
 }
 
 pub fn score_on_letter_frequency(string: &Vec<u8>) -> u16 {
-	use byte_conversion::*;
 	let mut frequency_table: Vec<u32> = vec![0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 	let example_frequency_table: Vec<f32> = vec![8.167, 1.492, 2.782, 4.253, 12.702, 2.228, 2.015, 6.094, 6.966, 0.153, 0.772, 4.025, 2.406, 6.749, 7.507, 1.929, 0.095, 5.987, 6.327, 9.056, 2.758, 0.978, 2.360, 0.150, 1.974, 0.074, 0.0];
 	assert_eq!(frequency_table.len(), example_frequency_table.len());
@@ -76,7 +75,7 @@ pub fn score_combined(string: &Vec<u8>) -> u16 {
 	let length_score = score_on_word_length(&string);
 	let freq_score = score_on_letter_frequency(&string);
 
-	if (length_score == 0 || freq_score == 0) {
+	if length_score == 0 || freq_score == 0 {
 		return 0;
 	}
 

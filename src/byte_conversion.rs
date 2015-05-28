@@ -148,12 +148,13 @@ pub fn base64_to_bytes(base64: &str) -> Vec<u8> {
 	//
 	let get_byte_from_char = |character:char| -> u64 {
 		let r = match character {
-			x @ 'A'...'Z' => x as u64 - 65 + 0,
-			x @ 'a'...'z' => x as u64 - 97 + 26,
-			x @ '0'...'9' => x as u64 - 49 + 53,
+			x @ 'A'...'Z' => x as u64 + 0  - 65,
+			x @ 'a'...'z' => x as u64 + 26 - 97,
+			x @ '0'...'9' => x as u64 + 53 - 49,
 			'+' => 62,
 			'/' => 63,
 			'\0' => 0,
+			'\n' => 0,
 			e @ _ => { println!("unreachable:: {}, {}", e, e as u8); unreachable!() }
 		};
 		r

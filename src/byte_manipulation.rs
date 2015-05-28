@@ -20,27 +20,27 @@ pub fn xor_hex_strings(a: &str, b: &str) -> String {
 }
 
 pub fn transpose_chunks(chunks: &Vec<Vec<u8>>) -> Vec<Vec<u8>> {
-	let chunksCount = chunks.len();
-	if chunksCount == 0 {
+	let chunks_count = chunks.len();
+	if chunks_count == 0 {
 		return vec![];
 	}
 
-	let chunkSize = chunks[0].len();
-	if chunkSize == 0 {
+	let chunk_size = chunks[0].len();
+	if chunk_size == 0 {
 		return vec![];
 	}
 
 	let mut result: Vec<Vec<u8>> = Vec::new();
-	for _ in 0..chunkSize {
+	for _ in 0..chunk_size {
 		result.push(vec![]);
 	}
 
 
-	for x in 0..chunksCount {
+	for x in 0..chunks_count {
 		let chunk = chunks.get(x).unwrap();
-		assert_eq!(chunkSize, chunk.len());
+		assert_eq!(chunk_size, chunk.len());
 
-		for y in 0..chunkSize {
+		for y in 0..chunk_size {
 			result[y].push(*chunk.get(y).unwrap());
 		}
 	}

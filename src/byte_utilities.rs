@@ -55,7 +55,7 @@ mod test {
 	fn hamming_distance_example() {
 		use byte_conversion::*;
 		let left = readable_text_to_bytes("this is a test");
-		let right = readable_text_to_bytes("wokka wokka!!!");		
+		let right = readable_text_to_bytes("wokka wokka!!!");
 
 		assert_eq!(37, hamming_distance(&left, &right));
 	}

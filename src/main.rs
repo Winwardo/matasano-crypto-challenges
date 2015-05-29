@@ -1,6 +1,5 @@
 #![cfg_attr(test, allow(dead_code))]
 #![allow(dead_code)]
-#![feature(convert)]
 
 extern crate crypto;
 extern crate rand;
@@ -13,9 +12,6 @@ mod byte_utilities;
 mod english_scoring;
 mod general_utilities;
 mod key;
-
-use crypto::{ symmetriccipher };
-use rand::{ Rng, OsRng };
 
 fn problem_3() {
 	// http://cryptopals.com/sets/1/challenges/3/
@@ -71,7 +67,7 @@ fn problem_7() {
 	let key = readable_text_to_bytes("YELLOW SUBMARINE");
 	assert!(key.len() == 16);
 
-    let decrypted_data_ = aes::decrypt_aes_128_ecb_no_padding(data_bytes, key);//.ok();
+    let decrypted_data_ = aes::decrypt_aes_128_ecb_no_padding(data_bytes, key);
 
     match decrypted_data_ {
     	Ok(v)  => println!("{:?}", bytes_to_readable_text(&v)),

@@ -307,6 +307,12 @@ mod test {
 	}
 
 	#[test]
+	fn base64_to_bytes_i_with_new_lines() {
+		let a : Vec<u8> = vec![72, 101, 108, 108, 111, 33];
+		assert_eq!(a, base64_to_bytes("SG\nVsbG8\nh"));
+	}
+
+	#[test]
 	fn bytes_and_base64_symmetricality_1() {
 		let base64_1 = "aGVsbG8=";
 		assert_eq!(base64_1, bytes_to_base64(&base64_to_bytes(base64_1)));

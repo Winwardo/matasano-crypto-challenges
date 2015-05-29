@@ -5,3 +5,4 @@ authors = ["Topher Winward <winwardo@gmail.com>"]
 
 [dependencies]
 rust-crypto = "0.2.31"
+rand = "0.3.8"

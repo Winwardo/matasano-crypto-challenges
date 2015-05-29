@@ -65,76 +65,18 @@ fn problem_7() {
 	// http://cryptopals.com/sets/1/challenges/7/
 	use byte_conversion::*;
 
-	use crypto::symmetriccipher::SynchronousStreamCipher;
-
-	//use std::rand::{OsRng, Rng};
-
-
 	let file_data = general_utilities::read_file("C:\\Users\\Topher\\Dropbox\\Public\\Programming\\Matasano\\matasano-crypto-challenges\\res\\7.txt");
 	let data_bytes = base64_to_bytes(&file_data);
 
+	let key = readable_text_to_bytes("YELLOW SUBMARINE");
+	assert!(key.len() == 16);
 
-	let key_ = readable_text_to_bytes("YELLOW SUBMARINE");
-	assert!(key_.len() == 16);
+    let decrypted_data_ = aes::decrypt_aes_128_ecb_no_padding(data_bytes, key);//.ok();
 
-
-
-
-
-
-
-
-
-	let message = "Hello World!";
-	
-	let mut q = readable_text_to_bytes(message);
-	//while q.len() % 16 != 0 {
-	//	q.push(0);
-	//}
-	
-
-	//let q = message.as_bytes();
-
-    let mut key: [u8; 32] = [0; 32];
-    let mut iv: [u8; 16] = [0; 16];
-
-    // In a real program, the key and iv may be determined
-    // using some other mechanism. If a password is to be used
-    // as a key, an algorithm like PBKDF2, Bcrypt, or Scrypt (all
-    // supported by Rust-Crypto!) would be a good choice to derive
-    // a password. For the purposes of this example, the key and
-    // iv are just random values.
-
-    //let mut rng = OsRng::new().ok().unwrap();
-    //rng.fill_bytes(&mut key);
-    //rng.fill_bytes(&mut iv);
-
-
-    //let encrypted_data = encrypt(&q, &key, &iv).ok().unwrap();
-    let mut encrypted_data = data_bytes.clone();
-    //encrypted_data.push(16);
-    //while encrypted_data.len() % 16 != 0 {
-   // 	encrypted_data.push(16);
-    //}
-
-    //println!("enc {:?}", bytes_to_readable_text(&encrypted_data));
-    println!("enc {:?}", encrypted_data.len());
-    println!("dat {:?}", data_bytes.len());
-    //println!("q   {:?}", q.len());
-
-    //println!("{:?}", encrypted_data[..]);
-    let decrypted_data_ = aes::decrypt_aes_128_ecb_no_padding(encrypted_data, key_);//.ok();
-
-    if (decrypted_data_.is_err()) {
-    	println!("{:?}", decrypted_data_.err().unwrap());
-    } else {    	
-   		let decrypted_data = decrypted_data_.ok().expect("woaaaah");
-   		println!("{:?}", bytes_to_readable_text(&decrypted_data));
+    match decrypted_data_ {
+    	Ok(v)  => println!("{:?}", bytes_to_readable_text(&v)),
+    	Err(e) => println!("Error decrypting data: {:?}", e),
     }
-
-
-    //assert!(message.as_bytes() == &decrypted_data[..]);
-
 }
 
 

@@ -2,3 +2,6 @@
 name = "io_topher_MatasanoCryptoChallenges"
 version = "0.0.1"
 authors = ["Topher Winward <winwardo@gmail.com>"]
+
+[dependencies]
+rust-crypto = "0.2.31"

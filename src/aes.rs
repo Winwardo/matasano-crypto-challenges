@@ -2,6 +2,7 @@ use crypto::{ symmetriccipher, buffer, aes, blockmodes };
 use crypto::buffer::{ ReadBuffer, WriteBuffer, BufferResult };
 
 pub fn decrypt_aes_128_ecb_no_padding(encrypted_data: Vec<u8>, key: Vec<u8>) -> Result<Vec<u8>, symmetriccipher::SymmetricCipherError> {
+    // https://github.com/DaGenix/rust-crypto/blob/master/examples/symmetriccipher.rs
     let mut decryptor = aes::ecb_decryptor(
         aes::KeySize::KeySize128,
         &key[..],

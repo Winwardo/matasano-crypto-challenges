@@ -1,6 +1,6 @@
 [package]
 name = "io_topher_matasano_crypto_challenges"
-version = "0.0.1"
+version = "0.1.0"
 authors = ["Topher Winward <winwardo@gmail.com>"]
 
 [dependencies]

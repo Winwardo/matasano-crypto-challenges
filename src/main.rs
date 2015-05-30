@@ -13,8 +13,6 @@ mod english_scoring;
 mod general_utilities;
 mod key;
 
-use std::collections::HashMap;
-
 fn problem_3() {
 	// http://cryptopals.com/sets/1/challenges/3/
 	use byte_conversion::*;
@@ -77,10 +75,6 @@ fn problem_7() {
     }
 }
 
-fn detect_ecb(ciphertext: &[u8]) -> bool {
-	false
-}
-
 fn problem_8() {
 	// http://cryptopals.com/sets/1/challenges/8/
 	use byte_conversion::*;
@@ -93,31 +87,16 @@ fn problem_8() {
 		.map(|x| hex_to_bytes(x))
 		.collect();
 
-	let key_size = 16;
-	let mut blocks_map: HashMap<&[u8], u8> = HashMap::new();
-	let mut ecb_candidates: Vec<Vec<u8>> = Vec::new();
+	let key_size = 16usize;
+	let mut ecb_candidates = Vec::new();
 
 	for ciphertext in &bytes {
-		for block in ciphertext.chunks(key_size) {
-			let c = blocks_map.entry(&block).or_insert(0);
-			*c += 1;
-
-			if *c == 2 {
-				ecb_candidates.push(general_utilities::slice_to_vec(ciphertext));
-			}
-		}
-	}
-
-	for (k, v) in blocks_map {
-		if v > 1 {
-			println!("{:?}, {:?}, {:?}", v, k, bytes_to_hex(&general_utilities::slice_to_vec(k)));
+		if attacks::detect_ecb(&ciphertext, key_size, 2) {
+			ecb_candidates.push(bytes_to_hex(ciphertext));
 		}
 	}
 
 	println!("{:?}", ecb_candidates);
-
-
-	//println!("{:?}, {} {} {}", bytes, bytes[0].len(), bytes[1].len(), bytes[2].len());
 }
 
 

@@ -52,6 +52,7 @@ impl RepeatingKey {
 //-----------------------------------------------------------------------------
 
 #[cfg(test)]
+#[allow(non_snake_case)]
 mod test {
 	use super::*;
 

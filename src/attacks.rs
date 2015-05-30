@@ -114,6 +114,28 @@ pub fn guess_repeating_xor_key(data_bytes: &Vec<u8>, max_keysize: usize) -> (u16
 	(top_score, top_decode, top_key)
 }
 
+pub fn detect_ecb(ciphertext: &[u8], key_size: usize, required_chunk_repeats: usize) -> bool {
+	// ECB is easy to detect.
+	// Simply cut your bytes up into key_size chunks, and see if any appear more than once.
+	// https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#Electronic_Codebook_.28ECB.29	
+	use std::collections::HashMap;
+
+	let mut chunk_counter: HashMap<&[u8], u8> = HashMap::new();
+
+	for chunk in ciphertext.chunks(key_size) {
+		let count = chunk_counter.entry(&chunk).or_insert(0);
+		*count += 1;
+	}
+
+	for (_, v) in chunk_counter {
+		if v >= required_chunk_repeats as u8 {
+			return true;
+		}
+	}
+
+	false
+}
+
 //-----------------------------------------------------------------------------
 
 #[cfg(test)]
@@ -185,7 +207,6 @@ mod test {
 		assert!(top_score > 0);
 	}
 
-
 	#[test]
 	fn guess_repeating_xor_key_decode_i_non_trivial_key() {
 		// http://cryptopals.com/sets/1/challenges/6/
@@ -202,5 +223,27 @@ mod test {
 		assert_eq!(bytes_to_readable_text(&example), bytes_to_readable_text(&guessed_decode));
 		assert_eq!(example_key, guessed_key);
 		assert!(top_score > 0);
+	}
+
+	#[test]
+	fn detect_ecb_i_problem_7() {
+		// http://cryptopals.com/sets/1/challenges/6/
+		use byte_conversion::*;
+
+		let example_hex = "d880619740a8a19b7840a8a31c810a3d08649af70dc06f4fd5d2d69c744cd283e2dd052f6b641dbf9d11b0348542bb5708649af70dc06f4fd5d2d69c744cd2839475c9dfdbc1d46597949d9c7e82bf5a08649af70dc06f4fd5d2d69c744cd28397a93eab8d6aecd566489154789a6b0308649af70dc06f4fd5d2d69c744cd283d403180c98c8f6db1f2a3f9c4040deb0ab51b29933f2c123c58386b06fba186a";
+		let example_bytes = hex_to_bytes(example_hex);
+
+		assert!(detect_ecb(&example_bytes[..], 16, 2));
+	}
+
+	#[test]
+	fn detect_ecb_i_problem_7_non() {
+		// http://cryptopals.com/sets/1/challenges/6/
+		use byte_conversion::*;
+
+		let example_hex = "5c4ca78f8de3527788e7d1efcd6aad0adc3878ea70993ae20937ef0a601730494946f078de2099c62de9af1c47ee4f18216ed5a7268464f210374dbf421d55449c8f399d8824c5a0ff8526a940223ee999a6f945f0ba3eaa672c434ad867ac7adaa46bd3289729c6c7d920dd0d8237bf678d88bde91e0683e72e88fef50bdb23cceb6270acba5aeebd0a834ccf99cd3e6bad8c158f5819f1f1c785fdaa3df505";
+		let example_bytes = hex_to_bytes(example_hex);
+
+		assert!(!detect_ecb(&example_bytes[..], 16, 2));
 	}
 }

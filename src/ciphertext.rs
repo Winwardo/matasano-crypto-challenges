@@ -14,13 +14,11 @@ impl PaddedBytes {
 		if length == 0 {
 			return Err("Attempted to pad 0 bytes.".to_string());
 		}
-		if length > block_size {
-			return Err("Attempted to pad a block larger than the block size.".to_string());
-		}
 
 		let mut padded = bytes.to_vec();
-		let bytes_left: u8 = (block_size - length) as u8;
-		while padded.len() < block_size {
+		let bytes_left: u8 = (length % block_size) as u8;
+		
+		while padded.len() % block_size > 0 {
 			padded.push(bytes_left);
 		}
 
@@ -33,6 +31,10 @@ impl PaddedBytes {
 
 	pub fn bytes(&self) -> &[u8] {
 		&self.ciphertext[..]
+	}
+
+	pub fn vec(&self) -> &Vec<u8> {
+		&self.ciphertext
 	}
 }
 

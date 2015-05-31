@@ -51,7 +51,7 @@ pub fn problem_7() {
 	let key = readable_text_to_bytes("YELLOW SUBMARINE");
 	assert!(key.len() == 16);
 
-	let decrypted_data_ = decrypt_aes_128_ecb_no_padding(data_bytes, key);
+	let decrypted_data_ = decrypt_aes_128_ecb_no_padding(&data_bytes[..], &key);
 
 	match decrypted_data_ {
 		Ok(v)  => println!("{:?}", bytes_to_readable_text(&v)),

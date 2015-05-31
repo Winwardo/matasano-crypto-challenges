@@ -1,8 +1,9 @@
 use crypto::{ symmetriccipher, buffer, aes, blockmodes };
 use crypto::buffer::{ ReadBuffer, WriteBuffer, BufferResult };
 
-pub fn decrypt_aes_128_ecb_no_padding(encrypted_data: Vec<u8>, key: Vec<u8>) -> Result<Vec<u8>, symmetriccipher::SymmetricCipherError> {
-    // https://github.com/DaGenix/rust-crypto/blob/master/examples/symmetriccipher.rs
+pub fn decrypt_aes_128_ecb_no_padding(encrypted_data: &[u8], key: &Vec<u8>) -> Result<Vec<u8>, symmetriccipher::SymmetricCipherError> {
+    // https://github.com/DaGenix/rust-crypto/blob/master/examples/symmetriccipher.rs#L82
+
     let mut decryptor = aes::ecb_decryptor(
         aes::KeySize::KeySize128,
         &key[..],
@@ -10,13 +11,71 @@ pub fn decrypt_aes_128_ecb_no_padding(encrypted_data: Vec<u8>, key: Vec<u8>) -> 
     );
 
     let mut final_result = Vec::<u8>::new();
-    let mut read_buffer = buffer::RefReadBuffer::new(&encrypted_data[..]);
+    let mut read_buffer = buffer::RefReadBuffer::new(encrypted_data);
     let mut buffer = [0; 4096];
     let mut write_buffer = buffer::RefWriteBuffer::new(&mut buffer);
 
     loop {
         let result = try!(decryptor.decrypt(&mut read_buffer, &mut write_buffer, true));
         final_result.extend(write_buffer.take_read_buffer().take_remaining().iter().map(|&i| i));
+        match result {
+            BufferResult::BufferUnderflow => break,
+            BufferResult::BufferOverflow => { }
+        }
+    }
+
+    Ok(final_result)
+}
+
+pub fn encrypt_aes_128_ecb_no_padding(data: &[u8], key: &Vec<u8>) -> Result<Vec<u8>, symmetriccipher::SymmetricCipherError> {
+    // https://github.com/DaGenix/rust-crypto/blob/master/examples/symmetriccipher.rs#L17
+
+    // Create an encryptor instance of the best performing
+    // type available for the platform.
+    let mut encryptor = aes::ecb_encryptor(
+            aes::KeySize::KeySize128,
+            &key[..],
+            blockmodes::NoPadding);
+
+    // Each encryption operation encrypts some data from
+    // an input buffer into an output buffer. Those buffers
+    // must be instances of RefReaderBuffer and RefWriteBuffer
+    // (respectively) which keep track of how much data has been
+    // read from or written to them.
+    let mut final_result = Vec::<u8>::new();
+    let mut read_buffer = buffer::RefReadBuffer::new(data);
+    let mut buffer = [0; 4096];
+    let mut write_buffer = buffer::RefWriteBuffer::new(&mut buffer);
+
+    // Each encryption operation will "make progress". "Making progress"
+    // is a bit loosely defined, but basically, at the end of each operation
+    // either BufferUnderflow or BufferOverflow will be returned (unless
+    // there was an error). If the return value is BufferUnderflow, it means
+    // that the operation ended while wanting more input data. If the return
+    // value is BufferOverflow, it means that the operation ended because it
+    // needed more space to output data. As long as the next call to the encryption
+    // operation provides the space that was requested (either more input data
+    // or more output space), the operation is guaranteed to get closer to
+    // completing the full operation - ie: "make progress".
+    //
+    // Here, we pass the data to encrypt to the enryptor along with a fixed-size
+    // output buffer. The 'true' flag indicates that the end of the data that
+    // is to be encrypted is included in the input buffer (which is true, since
+    // the input data includes all the data to encrypt). After each call, we copy
+    // any output data to our result Vec. If we get a BufferOverflow, we keep
+    // going in the loop since it means that there is more work to do. We can
+    // complete as soon as we get a BufferUnderflow since the encryptor is telling
+    // us that it stopped processing data due to not having any more data in the
+    // input buffer.
+    loop {
+        let result = try!(encryptor.encrypt(&mut read_buffer, &mut write_buffer, true));
+
+        // "write_buffer.take_read_buffer().take_remaining()" means:
+        // from the writable buffer, create a new readable buffer which
+        // contains all data that has been written, and then access all
+        // of that data as a slice.
+        final_result.extend(write_buffer.take_read_buffer().take_remaining().iter().map(|&i| i));
+
         match result {
             BufferResult::BufferUnderflow => break,
             BufferResult::BufferOverflow => { }
@@ -106,9 +165,35 @@ S15AVD2QS1V6fhRimJSVyT6QuGb8tKRsl2N+a2Xze36vgMhw7XK7zh//jC2H");
         let key = readable_text_to_bytes("YELLOW SUBMARINE");
         assert!(key.len() == 16);
 
-        let decrypted_data_ = decrypt_aes_128_ecb_no_padding(encrypted_bytes, key);
+        let decrypted_data_ = decrypt_aes_128_ecb_no_padding(&encrypted_bytes[..], &key);
         let decrypted_data = decrypted_data_.ok().unwrap();
 
         assert_eq!(expected, decrypted_data);
+    }
+
+
+    #[test]
+    fn encrypt_then_decrypt() {
+        use byte_conversion::*;
+        use ciphertext::*;
+
+        let text = "We\'re up all night to the sun\nWe\'re up all night to get some\nWe\'re up all night for good fun\nWe\n're up all night to get lucky".to_string();
+        let padded_data = match PaddedBytes::from_text(&text, 16) {
+            Ok(x) => x,
+            Err(e) => { println!("{:?}", e); panic!() },
+        };
+        let key = readable_text_to_bytes("YELLOW SUBMARINE");
+
+        let encrypted_bytes = match encrypt_aes_128_ecb_no_padding(padded_data.vec(), &key) {
+            Ok(x) => x,
+            Err(e) => { println!("{:?}", e); panic!() },
+        };
+
+        let decrypted_data = match decrypt_aes_128_ecb_no_padding(&encrypted_bytes, &key) {
+            Ok(x) => x,
+            Err(e) => { println!("{:?}", e); panic!() },
+        };
+
+        assert_eq!(padded_data.bytes(), &decrypted_data[..]);
     }
 }

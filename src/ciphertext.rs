@@ -16,8 +16,17 @@ impl PaddedBytes {
 		}
 
 		let mut padded = bytes.to_vec();
-		let bytes_left: u8 = (length % block_size) as u8;
-		
+		let mut bytes_left = 0;
+
+		// Normalise the bytes length for the padding value
+		while bytes_left < length as u8 {
+			bytes_left += block_size as u8;
+		}
+		while bytes_left > length as u8 {
+			bytes_left -= length as u8;
+		}
+
+		// Pad the bytes
 		while padded.len() % block_size > 0 {
 			padded.push(bytes_left);
 		}
@@ -53,13 +62,61 @@ mod test {
 	}
 
 	#[test]
-	fn PaddedText_yellow_submarine() {
+	fn PaddedText_yellow_submarine_20() {
 		let text = match PaddedBytes::from_text("YELLOW SUBMARINE", 20) {
 			Ok(x) => x,
 			Err(x) => panic!(x),
 		};
 
 		let expected = ::byte_conversion::readable_text_to_bytes(&"YELLOW SUBMARINE\x04\x04\x04\x04");
+
+		assert_eq!(expected, text.bytes());
+	}
+
+	#[test]
+	fn PaddedText_yellow_submarine_16() {
+		let text = match PaddedBytes::from_text("YELLOW SUBMARINE", 16) {
+			Ok(x) => x,
+			Err(x) => panic!(x),
+		};
+
+		let expected = ::byte_conversion::readable_text_to_bytes(&"YELLOW SUBMARINE");
+
+		assert_eq!(expected, text.bytes());
+	}
+
+	#[test]
+	fn PaddedText_yellow_submarine_32() {
+		let text = match PaddedBytes::from_text("YELLOW SUBMARINE", 32) {
+			Ok(x) => x,
+			Err(x) => panic!(x),
+		};
+
+		let expected = ::byte_conversion::readable_text_to_bytes(&"YELLOW SUBMARINE\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10");
+
+		assert_eq!(expected, text.bytes());
+	}
+
+	#[test]
+	fn PaddedText_yellow_submarine_10() {
+		let text = match PaddedBytes::from_text("YELLOW SUBMARINE", 10) {
+			Ok(x) => x,
+			Err(x) => panic!(x),
+		};
+
+		let expected = ::byte_conversion::readable_text_to_bytes(&"YELLOW SUBMARINE\x04\x04\x04\x04");
+
+		assert_eq!(expected, text.bytes());
+	}	
+
+	#[test]
+	fn PaddedText_yellow_submarine_3() {
+		let text = match PaddedBytes::from_text("YELLOW SUBMARINE", 3) {
+			Ok(x) => x,
+			Err(x) => panic!(x),
+		};
+
+		let expected = ::byte_conversion::readable_text_to_bytes(&"YELLOW SUBMARINE\x02\x02");
 
 		assert_eq!(expected, text.bytes());
 	}

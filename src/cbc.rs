@@ -4,15 +4,15 @@ use byte_manipulation::*;
 use ciphertext::*;
 use key::*;
 
-pub struct CBC {
-	left: Vec<u8>,
-	plaintext: PaddedBytes,
+pub struct CipherBlock {
+	initialisation_vector: Vec<u8>,
+	input: PaddedBytes,
 	key: RepeatingKey,
 }
 
-impl CBC {
-	pub fn ciphertext(&mut self) -> Vec<u8> {
-		let xored = xor_byte_streams(&self.left, self.plaintext.vec());
+impl CipherBlock {
+	pub fn to_ciphertext(&mut self) -> Vec<u8> {
+		let xored = xor_byte_streams(&self.initialisation_vector, self.input.vec());
 		let key = self.key.of_length(16);
 		let cipher = encrypt_aes_128_ecb_no_padding(&xored[..], &key);
 
@@ -33,12 +33,12 @@ mod test {
 
 	#[test]
 	fn RepeatingKey_sanity() {
-		let mut cbc = CBC {
-			plaintext: PaddedBytes::from_text("Some text", 16).unwrap(),
-			left: RepeatingKey::new(&"\x00").of_length(16),
+		let mut cipher_block = CipherBlock {
+			input: PaddedBytes::from_text("Some text", 16).unwrap(),
+			initialisation_vector: RepeatingKey::new(&"\x00").of_length(16),
 			key: RepeatingKey::new(&"YELLOW SUBMARINE"),
 		};
 
-		assert_eq!(16, cbc.ciphertext().len());
+		assert_eq!(16, cipher_block.to_ciphertext().len());
 	}
 }

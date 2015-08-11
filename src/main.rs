@@ -6,6 +6,7 @@ extern crate rand;
 
 mod aes;
 mod attacks;
+mod block_cipher_operation;
 mod byte_conversion;
 mod byte_manipulation;
 mod byte_utilities;

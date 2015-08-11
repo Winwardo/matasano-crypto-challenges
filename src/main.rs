@@ -14,6 +14,7 @@ mod cbc;
 mod ciphertext;
 mod english_scoring;
 mod general_utilities;
+mod message_operator;
 mod key;
 
 mod set1;

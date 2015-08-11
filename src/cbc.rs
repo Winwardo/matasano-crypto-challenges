@@ -6,9 +6,9 @@ use ciphertext::*;
 use key::*;
 
 pub struct CBC {
-	initialisation_vector: Vec<u8>,
-	input: PaddedBytes,
-	key: RepeatingKey,
+	pub initialisation_vector: Vec<u8>,
+	pub input: PaddedBytes,
+	pub key: RepeatingKey,
 }
 
 impl BlockCipherOperation for CBC {

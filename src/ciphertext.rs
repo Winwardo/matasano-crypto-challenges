@@ -22,7 +22,7 @@ impl PaddedBytes {
 		while bytes_left < length as u8 {
 			bytes_left += block_size as u8;
 		}
-		while bytes_left > length as u8 {
+		while bytes_left >= block_size as u8 {
 			bytes_left -= length as u8;
 		}
 
@@ -69,6 +69,18 @@ mod test {
 		};
 
 		let expected = ::byte_conversion::readable_text_to_bytes(&"YELLOW SUBMARINE\x04\x04\x04\x04");
+
+		assert_eq!(expected, text.bytes());
+	}
+
+	#[test]
+	fn PaddedText_12345_16() {
+		let text = match PaddedBytes::from_text("12345", 16) {
+			Ok(x) => x,
+			Err(x) => panic!(x),
+		};
+
+		let expected = ::byte_conversion::readable_text_to_bytes(&"12345\x0B\x0B\x0B\x0B\x0B\x0B\x0B\x0B\x0B\x0B\x0B");
 
 		assert_eq!(expected, text.bytes());
 	}

@@ -27,7 +27,7 @@ impl MessageOperator {
 		result
 	}
 	
-	pub fn decrypt_raw(&self) -> Vec<u8> {
+	fn decrypt_raw(&self) -> Vec<u8> {
 		let mut result: Vec<u8> = Vec::new();		
 		let mut last_iv = self.IV.to_owned();
 	
@@ -51,7 +51,7 @@ impl MessageOperator {
 			let check_vec = vec![last_char; last_char as usize];
 			if decrypted.ends_with(&check_vec[..]) { // Is there actually padding?
 				let length = decrypted.len();
-				let pos = (length as u8 - last_char) as usize;
+				let pos = (length  - last_char as usize);
 				
 				return decrypted.iter()
 					.take(pos)

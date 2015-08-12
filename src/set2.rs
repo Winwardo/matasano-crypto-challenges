@@ -38,7 +38,7 @@ pub fn problem_10() {
 		key: readable_text_to_bytes(&key),
 	};
 	
-	println!("{}", bytes_to_readable_text(&mo_decrypt.decrypt_raw()));
+	println!("{}", bytes_to_readable_text(&mo_decrypt.decrypt()));
 }
 
 pub fn set2() {

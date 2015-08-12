@@ -23,7 +23,7 @@ mod set2;
 fn main() {
 	println!("=====\nRunning.\n");
 
-	set2::problem_9();
+	set2::problem_10();
 
 	println!("\nComplete.");
 }

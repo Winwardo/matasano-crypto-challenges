@@ -15,7 +15,7 @@ pub fn problem_3() {
 pub fn problem_4() {
 	// http://cryptopals.com/sets/1/challenges/4/
 
-	let s = read_file("C:\\Users\\Topher\\Dropbox\\Public\\Programming\\Matasano\\matasano-crypto-challenges\\res\\4.txt");
+	let s = read_file("C:\\Users\\Topher\\Documents\\GitHub\\matasano-crypto-challenges\\res\\4.txt");
 
 	let mut top_score = 0;
 	let mut top_decode = vec![];
@@ -34,7 +34,7 @@ pub fn problem_4() {
 pub fn problem_6() {
 	// http://cryptopals.com/sets/1/challenges/6/
 
-	let file_data = ::general_utilities::read_file("C:\\Users\\Topher\\Dropbox\\Public\\Programming\\Matasano\\matasano-crypto-challenges\\res\\6.txt");
+	let file_data = ::general_utilities::read_file("C:\\Users\\Topher\\Documents\\GitHub\\matasano-crypto-challenges\\res\\6.txt");
 	let data_bytes = base64_to_bytes(&file_data);
 
 	let (top_score, top_decode, top_key) = guess_repeating_xor_key(&data_bytes, 40);
@@ -45,7 +45,7 @@ pub fn problem_6() {
 pub fn problem_7() {
 	// http://cryptopals.com/sets/1/challenges/7/
 
-	let file_data = read_file("C:\\Users\\Topher\\Dropbox\\Public\\Programming\\Matasano\\matasano-crypto-challenges\\res\\7.txt");
+	let file_data = read_file("C:\\Users\\Topher\\Documents\\GitHub\\matasano-crypto-challenges\\res\\7.txt");
 	let data_bytes = base64_to_bytes(&file_data);
 
 	let key = readable_text_to_bytes("YELLOW SUBMARINE");
@@ -61,7 +61,7 @@ pub fn problem_7() {
 
 pub fn problem_8() {
 	// http://cryptopals.com/sets/1/challenges/8/
-	let file_data = ::general_utilities::read_file("C:\\Users\\Topher\\Dropbox\\Public\\Programming\\Matasano\\matasano-crypto-challenges\\res\\8.txt");
+	let file_data = ::general_utilities::read_file("C:\\Users\\Topher\\Documents\\GitHub\\matasano-crypto-challenges\\res\\8.txt");
 	
 	// Now split into a vector of bytes
 	let bytes: Vec<Vec<u8>> = file_data

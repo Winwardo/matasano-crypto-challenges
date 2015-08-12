@@ -10,7 +10,7 @@ This is my first time programming in Rust so I thought this would act as a neat 
 
 ## Current status
 * Set 1: 8/8
-* Set 2: 0/8
+* Set 2: 2/8
 * Set 3: 0/8
 * Set 4: 0/8
 * Set 5: 0/8

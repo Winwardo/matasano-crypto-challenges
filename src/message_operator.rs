@@ -4,11 +4,11 @@ use ciphertext::*;
 use key::*;
 
 pub struct MessageOperator {
-	message: Vec<u8>,
-	block_operator: String,
-	IV: Vec<u8>,
-	block_size: usize,
-	key: Vec<u8>,
+	pub message: Vec<u8>,
+	pub block_operator: String,
+	pub IV: Vec<u8>,
+	pub block_size: usize,
+	pub key: Vec<u8>,
 }
 
 impl MessageOperator {
@@ -27,7 +27,7 @@ impl MessageOperator {
 		result
 	}
 	
-	fn decrypt_raw(&self) -> Vec<u8> {
+	pub fn decrypt_raw(&self) -> Vec<u8> {
 		let mut result: Vec<u8> = Vec::new();		
 		let mut last_iv = self.IV.to_owned();
 	

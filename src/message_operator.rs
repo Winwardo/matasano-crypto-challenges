@@ -31,7 +31,7 @@ impl MessageOperator {
 		let mut result: Vec<u8> = Vec::new();		
 		let mut last_iv = self.IV.to_owned();
 	
-		for chunk in self.message.chunks(self.block_size).rev() {						
+		for chunk in self.message.chunks(self.block_size) {						
 			let mut cipher_block = self.make_operation(chunk, last_iv);	
 			let decrypted = cipher_block.decrypt();			
 			

@@ -5,130 +5,130 @@ pub struct RepeatingKey {
 }
 
 impl Iterator for RepeatingKey {
-	type Item = u8;
+    type Item = u8;
 
     fn next(&mut self) -> Option<u8> {
-		let result = Some(self.key[self.iter_val as usize]);
-    	self.iter_val = (self.iter_val + 1) % self.key_size;
+        let result = Some(self.key[self.iter_val as usize]);
+        self.iter_val = (self.iter_val + 1) % self.key_size;
 
-    	result
+        result
     }
 }
 
 impl RepeatingKey {
-	pub fn new_bytes(key_bytes: &Vec<u8>) -> RepeatingKey {
-		let key_size: u16 = key_bytes.len() as u16;
+    pub fn new_bytes(key_bytes: &Vec<u8>) -> RepeatingKey {
+        let key_size: u16 = key_bytes.len() as u16;
 
-		RepeatingKey {
-			key: key_bytes.clone(),
-			iter_val: 0,
-			key_size: key_size,
-		}
-	}
+        RepeatingKey {
+            key: key_bytes.clone(),
+            iter_val: 0,
+            key_size: key_size,
+        }
+    }
 
-	pub fn new(key: &str) -> RepeatingKey {
-		let key_bytes: Vec<u8> = key.bytes().collect();
-		RepeatingKey::new_bytes(&key_bytes)
-	}
+    pub fn new(key: &str) -> RepeatingKey {
+        let key_bytes: Vec<u8> = key.bytes().collect();
+        RepeatingKey::new_bytes(&key_bytes)
+    }
 
-	pub fn of_length(&mut self, length: usize) -> Vec<u8> {
-		let mut result = vec![];
-		for x in self.take(length) {
-			result.push(x);
-		}
-		self.iter_val = 0;
-		result
-	}
+    pub fn of_length(&mut self, length: usize) -> Vec<u8> {
+        let mut result = vec![];
+        for x in self.take(length) {
+            result.push(x);
+        }
+        self.iter_val = 0;
+        result
+    }
 
-	pub fn xor_with(&mut self, bytes: &Vec<u8>) -> Vec<u8> {
-		use byte_manipulation::*;
+    pub fn xor_with(&mut self, bytes: &Vec<u8>) -> Vec<u8> {
+        use byte_manipulation::*;
 
-		let length = bytes.len();
+        let length = bytes.len();
 
-		xor_byte_streams(&bytes, &self.of_length(length))		
-	}
+        xor_byte_streams(&bytes, &self.of_length(length))
+    }
 }
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 #[cfg(test)]
 #[allow(non_snake_case)]
 mod test {
-	use super::*;
+    use super::*;
 
-	#[test]
-	fn RepeatingKey_short() {
-		let rk = RepeatingKey::new(&"ICE");
-		let mut actual: Vec<u8> = vec![];
+    #[test]
+    fn RepeatingKey_short() {
+        let rk = RepeatingKey::new(&"ICE");
+        let mut actual: Vec<u8> = vec![];
 
-		for x in rk.take(2) {
-			actual.push(x);
-		}
+        for x in rk.take(2) {
+            actual.push(x);
+        }
 
-		let expected: Vec<u8> = "IC".to_string().bytes().collect();
+        let expected: Vec<u8> = "IC".to_string().bytes().collect();
 
-		assert_eq!(expected, actual);
-	}
+        assert_eq!(expected, actual);
+    }
 
-	#[test]
-	fn RepeatingKey_long() {
-		let rk = RepeatingKey::new(&"ICE");
-		let mut actual: Vec<u8> = vec![];
+    #[test]
+    fn RepeatingKey_long() {
+        let rk = RepeatingKey::new(&"ICE");
+        let mut actual: Vec<u8> = vec![];
 
-		for x in rk.take(7) {
-			actual.push(x);
-		}
+        for x in rk.take(7) {
+            actual.push(x);
+        }
 
-		let expected: Vec<u8> = "ICEICEI".to_string().bytes().collect();
+        let expected: Vec<u8> = "ICEICEI".to_string().bytes().collect();
 
-		assert_eq!(expected, actual);
-	}
+        assert_eq!(expected, actual);
+    }
 
-	#[test]
-	fn RepeatingKey_problem5() {
-		// http://cryptopals.com/sets/1/challenges/5/
-		use byte_conversion::*;
+    #[test]
+    fn RepeatingKey_problem5() {
+        // http://cryptopals.com/sets/1/challenges/5/
+        use byte_conversion::*;
 
-		let bytes = readable_text_to_bytes(&"Burning 'em, if you ain't quick and nimble\nI go crazy when I hear a cymbal");
-		let output = RepeatingKey::new(&"ICE").xor_with(&bytes);
-		
-		let expected = hex_to_bytes(&"0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f");
+        let bytes = readable_text_to_bytes(&"Burning 'em, if you ain't quick and nimble\nI go crazy when I hear a cymbal");
+        let output = RepeatingKey::new(&"ICE").xor_with(&bytes);
 
-		assert_eq!(expected, output);
-	}
+        let expected = hex_to_bytes(&"0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f");
 
-	#[test]
-	fn RepeatingKey_of_length() {
-		let actual = RepeatingKey::new(&"ICE").of_length(7);
-		let expected = vec![73, 67, 69, 73, 67, 69, 73];
+        assert_eq!(expected, output);
+    }
 
-		assert_eq!(expected, actual);
-	}
+    #[test]
+    fn RepeatingKey_of_length() {
+        let actual = RepeatingKey::new(&"ICE").of_length(7);
+        let expected = vec![73, 67, 69, 73, 67, 69, 73];
 
-	#[test]
-	fn RepeatingKey_encrypt_bytes() {
-		use byte_conversion::*;
+        assert_eq!(expected, actual);
+    }
 
-		let bytes = readable_text_to_bytes(&"Burning 'em, if you ain't quick and nimble\nI go crazy when I hear a cymbal");
-		let output = RepeatingKey::new(&"ICE").xor_with(&bytes);
-		
-		let expected = hex_to_bytes(&"0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f");
+    #[test]
+    fn RepeatingKey_encrypt_bytes() {
+        use byte_conversion::*;
 
-		assert_eq!(expected, output);
-	}
+        let bytes = readable_text_to_bytes(&"Burning 'em, if you ain't quick and nimble\nI go crazy when I hear a cymbal");
+        let output = RepeatingKey::new(&"ICE").xor_with(&bytes);
 
-	#[test]
-	fn RepeatingKey_encrypt_bytes_twice() {
-		use byte_conversion::*;
+        let expected = hex_to_bytes(&"0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f");
 
-		let word = "Burning 'em, if you ain't quick and nimble\nI go crazy when I hear a cymbal";
+        assert_eq!(expected, output);
+    }
 
-		let bytes = readable_text_to_bytes(&word);
-		let mut key = RepeatingKey::new(&"ICE");
+    #[test]
+    fn RepeatingKey_encrypt_bytes_twice() {
+        use byte_conversion::*;
 
-		let encrypted = key.xor_with(&bytes);
-		let decrypted = key.xor_with(&encrypted);
+        let word = "Burning 'em, if you ain't quick and nimble\nI go crazy when I hear a cymbal";
 
-		assert_eq!(bytes, decrypted);
-	}
+        let bytes = readable_text_to_bytes(&word);
+        let mut key = RepeatingKey::new(&"ICE");
+
+        let encrypted = key.xor_with(&bytes);
+        let decrypted = key.xor_with(&encrypted);
+
+        assert_eq!(bytes, decrypted);
+    }
 }

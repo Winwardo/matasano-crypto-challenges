@@ -21,9 +21,9 @@ mod set1;
 mod set2;
 
 fn main() {
-	println!("=====\nRunning.\n");
+    println!("=====\nRunning.\n");
 
-	set2::problem_10();
+    set2::problem_10();
 
-	println!("\nComplete.");
+    println!("\nComplete.");
 }

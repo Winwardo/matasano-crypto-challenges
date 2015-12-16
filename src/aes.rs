@@ -1,14 +1,14 @@
-use crypto::{ symmetriccipher, buffer, aes, blockmodes };
-use crypto::buffer::{ ReadBuffer, WriteBuffer, BufferResult };
+use crypto::{symmetriccipher, buffer, aes, blockmodes};
+use crypto::buffer::{ReadBuffer, WriteBuffer, BufferResult};
 
-pub fn decrypt_aes_128_ecb_no_padding(encrypted_data: &[u8], key: &Vec<u8>) -> Result<Vec<u8>, symmetriccipher::SymmetricCipherError> {
+pub fn decrypt_aes_128_ecb_no_padding(encrypted_data: &[u8],
+                                      key: &Vec<u8>)
+                                      -> Result<Vec<u8>, symmetriccipher::SymmetricCipherError> {
     // https://github.com/DaGenix/rust-crypto/blob/master/examples/symmetriccipher.rs#L82
 
-    let mut decryptor = aes::ecb_decryptor(
-        aes::KeySize::KeySize128,
-        &key[..],
-        blockmodes::NoPadding
-    );
+    let mut decryptor = aes::ecb_decryptor(aes::KeySize::KeySize128,
+                                           &key[..],
+                                           blockmodes::NoPadding);
 
     let mut final_result = Vec::<u8>::new();
     let mut read_buffer = buffer::RefReadBuffer::new(encrypted_data);
@@ -20,22 +20,23 @@ pub fn decrypt_aes_128_ecb_no_padding(encrypted_data: &[u8], key: &Vec<u8>) -> R
         final_result.extend(write_buffer.take_read_buffer().take_remaining().iter().map(|&i| i));
         match result {
             BufferResult::BufferUnderflow => break,
-            BufferResult::BufferOverflow => { }
+            BufferResult::BufferOverflow => {}
         }
     }
 
     Ok(final_result)
 }
 
-pub fn encrypt_aes_128_ecb_no_padding(data: &[u8], key: &Vec<u8>) -> Result<Vec<u8>, symmetriccipher::SymmetricCipherError> {
+pub fn encrypt_aes_128_ecb_no_padding(data: &[u8],
+                                      key: &Vec<u8>)
+                                      -> Result<Vec<u8>, symmetriccipher::SymmetricCipherError> {
     // https://github.com/DaGenix/rust-crypto/blob/master/examples/symmetriccipher.rs#L17
 
     // Create an encryptor instance of the best performing
     // type available for the platform.
-    let mut encryptor = aes::ecb_encryptor(
-            aes::KeySize::KeySize128,
-            &key[..],
-            blockmodes::NoPadding);
+    let mut encryptor = aes::ecb_encryptor(aes::KeySize::KeySize128,
+                                           &key[..],
+                                           blockmodes::NoPadding);
 
     // Each encryption operation encrypts some data from
     // an input buffer into an output buffer. Those buffers
@@ -78,14 +79,14 @@ pub fn encrypt_aes_128_ecb_no_padding(data: &[u8], key: &Vec<u8>) -> Result<Vec<
 
         match result {
             BufferResult::BufferUnderflow => break,
-            BufferResult::BufferOverflow => { }
+            BufferResult::BufferOverflow => {}
         }
     }
 
     Ok(final_result)
 }
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 #[cfg(test)]
 mod test {
@@ -180,18 +181,27 @@ S15AVD2QS1V6fhRimJSVyT6QuGb8tKRsl2N+a2Xze36vgMhw7XK7zh//jC2H");
         let text = "We\'re up all night to the sun\nWe\'re up all night to get some\nWe\'re up all night for good fun\nWe\n're up all night to get lucky".to_string();
         let padded_data = match PaddedBytes::from_text(&text, 16) {
             Ok(x) => x,
-            Err(e) => { println!("{:?}", e); panic!() },
+            Err(e) => {
+                println!("{:?}", e);
+                panic!()
+            }
         };
         let key = readable_text_to_bytes("YELLOW SUBMARINE");
 
         let encrypted_bytes = match encrypt_aes_128_ecb_no_padding(padded_data.vec(), &key) {
             Ok(x) => x,
-            Err(e) => { println!("{:?}", e); panic!() },
+            Err(e) => {
+                println!("{:?}", e);
+                panic!()
+            }
         };
 
         let decrypted_data = match decrypt_aes_128_ecb_no_padding(&encrypted_bytes, &key) {
             Ok(x) => x,
-            Err(e) => { println!("{:?}", e); panic!() },
+            Err(e) => {
+                println!("{:?}", e);
+                panic!()
+            }
         };
 
         assert_eq!(padded_data.bytes(), &decrypted_data[..]);
